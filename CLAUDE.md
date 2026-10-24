@@ -34,7 +34,7 @@ Env `SOUNDPAD_PIPE` подменяет путь pipe (так работают т
 
 ## Сборка и репозиторий
 
-Git: ветка `main`, первый коммит 2026-10-24; `.gitattributes` держит LF (у пользователя глобально `autocrlf`). Автор задан локально в репозитории: `Egor Shevchuk <43380317+Iminrage@users.noreply.github.com>` (глобальный git пользователя рабочий, его не трогать). Будущий remote: GitHub `Iminrage`; `gh` не установлен, вход через Git Credential Manager. Не пушить без просьбы.
+Git: ветка `main`, первый коммит 2026-10-24; `.gitattributes` держит LF (у пользователя глобально `autocrlf`). Автор задан локально в репозитории: `Egor Shevchuk <43380317+Iminrage@users.noreply.github.com>` (глобальную настройку git не трогать). Будущий remote: GitHub `Iminrage`; `gh` не установлен, вход через Git Credential Manager. Не пушить без просьбы.
 
 `npm run dist` собирает `dist\Soundpad HUD <версия>.exe` (portable, ~105 МБ, распаковывается во временную папку при запуске). В `build`: `npmRebuild: false` (иначе electron-builder пересобирает uiohook-napi через node-gyp и падает без Python; готовая сборка win32-x64 есть в пакете), из пакета исключены исходники C и сборки под другие ОС. `.node` попадает в `app.asar.unpacked` автоматически. Собранный exe проверен: запускается, хук и библиотека Soundpad работают. Конфиг и лог общие с dev-версией (`%APPDATA%\soundpad-hud`), single-instance тоже общий: одновременно работает только одна из них. Подписи кода нет, SmartScreen может предупредить.
 

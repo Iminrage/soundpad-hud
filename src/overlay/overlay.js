@@ -372,7 +372,7 @@
       slots: [
         { label: 'Bruh', icon: '😐' },
         { label: 'Vine boom', icon: '💥' },
-        { label: 'Oxxxymiron - Где нас нет', icon: '📢' },
+        { label: 'Artist - Название трека', icon: '📢' },
         { label: 'Это очень длинное название звука, которое не помещается в центре колеса', icon: '🎺' },
         { label: 'Стоп', icon: '⏹', stop: true },
         { label: '', icon: '', empty: true },
