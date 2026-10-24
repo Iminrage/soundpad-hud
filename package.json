@@ -4,7 +4,7 @@
   "description": "Emote-wheel HUD поверх Soundpad (Steam): по бинду открывается колесо, выбранный звук играет через Soundpad",
   "main": "src/main/main.js",
   "private": true,
-  "author": "Soundpad HUD",
+  "author": "Egor Shevchuk",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
