@@ -139,49 +139,78 @@
     renderHints(slot);
   }
 
+  // действия в строке подсказок в этом порядке: главное — первым, «Закрыть» — последним
+  const ACTIONS = [
+    'Сыграть',
+    'Остановить звук',
+    'Открыть категорию',
+    'К категориям',
+    'Прослушать в наушниках',
+    'Выбрать сектор',
+    'Листать страницы',
+    'Колесо останется',
+    'Закрыть',
+  ];
+
   /**
-   * Строка подсказок под колесом: что сейчас сделают отпускание бинда, клики, прокрутка.
+   * Что сейчас сделают отпускание бинда, клики, прокрутка: пары [клавиша, действие].
    * Повторяет обработку в main: mousedown (ЛКМ/ПКМ, центр), navigate, stayOpen, toggle.
    */
   function hintItems(slot) {
     const kind = !slot ? 'center' : slot.stop ? 'stop' : slot.back ? 'back' : slot.folder ? 'folder' : slot.empty ? 'empty' : 'sound';
     const items = [];
     if (ctx.holding) {
-      const missed = ctx.stayOpen ? 'колесо останется' : 'закрыть';
-      items.push(['Отпусти бинд', { sound: 'сыграть', stop: 'остановить звук' }[kind] || missed]);
+      const missed = ctx.stayOpen ? 'Колесо останется' : 'Закрыть';
+      items.push(['Отпусти бинд', { sound: 'Сыграть', stop: 'Остановить звук' }[kind] || missed]);
     }
     const lmb = {
-      center: 'закрыть',
-      empty: 'закрыть',
-      sound: 'сыграть',
-      stop: 'остановить звук',
-      folder: 'открыть категорию',
-      back: 'к категориям',
+      center: 'Закрыть',
+      empty: 'Закрыть',
+      sound: 'Сыграть',
+      stop: 'Остановить звук',
+      folder: 'Открыть категорию',
+      back: 'К категориям',
     }[kind];
     items.push(['ЛКМ', lmb]);
-    if (kind === 'sound') items.push(['Держи ПКМ', 'прослушать в наушниках']);
+    if (kind === 'sound') items.push(['Держи ПКМ', 'Прослушать в наушниках']);
     if (kind === 'center') {
-      items.push(['ПКМ', ctx.canBack ? 'к категориям' : 'закрыть']);
-      items.push(['Мышь, ← →', 'выбрать']);
+      items.push(['ПКМ', ctx.canBack ? 'К категориям' : 'Закрыть']);
+      items.push(['Мышь', 'Выбрать сектор'], ['← →', 'Выбрать сектор']);
     }
-    if (paged) items.push(['Прокрутка', 'страницы']);
-    if (!ctx.holding) items.push(['Бинд', 'закрыть']);
-    items.push(['Esc', 'закрыть']);
+    if (paged) items.push(['Прокрутка', 'Листать страницы']);
+    if (!ctx.holding) items.push(['Бинд', 'Закрыть']);
+    items.push(['Esc', 'Закрыть']);
     return items;
   }
 
+  /** Группирует по действию: «Сыграть: [Отпусти бинд] [ЛКМ]», без повторов одного действия. */
+  function hintGroups(slot) {
+    const groups = new Map();
+    for (const [key, action] of hintItems(slot)) {
+      if (!groups.has(action)) groups.set(action, []);
+      groups.get(action).push(key);
+    }
+    return [...groups].sort(([a], [b]) => ACTIONS.indexOf(a) - ACTIONS.indexOf(b));
+  }
+
   function renderHints(slot) {
-    const items = hintItems(slot);
-    const key = JSON.stringify(items);
+    const groups = hintGroups(slot);
+    const key = JSON.stringify(groups);
     if (key === hintsKey) return; // при движении мыши внутри сектора не перерисовываем
     hintsKey = key;
     hintsEl.replaceChildren(
-      ...items.map(([k, text]) => {
+      ...groups.map(([action, keys]) => {
         const item = document.createElement('span');
-        const badge = document.createElement('span');
-        badge.className = 'key';
-        badge.textContent = k;
-        item.append(badge, text);
+        const label = document.createElement('span');
+        label.className = 'act';
+        label.textContent = action;
+        item.append(label);
+        for (const k of keys) {
+          const badge = document.createElement('span');
+          badge.className = 'key';
+          badge.textContent = k;
+          item.append(badge);
+        }
         return item;
       })
     );

@@ -177,9 +177,13 @@ body {
   visibility: hidden;
 }
 
+#hints .act {
+  margin-right: 6px;
+}
+
 #hints .key {
   display: inline-block;
-  margin-right: 6px;
+  margin-left: 4px;
   padding: 1px 7px;
   border-radius: 5px;
   background: rgba(143, 220, 255, 0.16);
