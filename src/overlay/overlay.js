@@ -15,13 +15,16 @@
   const hubSub = document.getElementById('hubSub');
   const hubPage = document.getElementById('hubPage');
   const dot = document.getElementById('dot');
+  const hintsEl = document.getElementById('hints');
 
   let count = 8;
   let slots = [];
   let segs = [];
   let selected = null;
-  let hint = '';
+  let paged = false;
+  let ctx = { holding: true, stayOpen: false, canBack: false }; // от main, см. overlayPayload
   let prompt = 'Выбери звук'; // в центре, когда ничего не выбрано
+  let hintsKey = '';
 
   const polar = (r, deg) => {
     const a = (deg * Math.PI) / 180;
@@ -71,8 +74,9 @@
   function build(data) {
     count = data.sectors;
     slots = data.slots;
-    hint = data.hint || '';
+    ctx = { ...ctx, ...(data.ctx || {}) };
     prompt = data.title || 'Выбери звук';
+    paged = !!data.page;
     hubPage.textContent = data.page ? `стр. ${data.page.n}/${data.page.total}` : '';
     selected = null;
     segs = [];
@@ -131,7 +135,56 @@
     if (!slot) setHub(prompt, '');
     else if (slot.stop) setHub('Стоп', 'Остановить звук');
     else if (slot.empty) setHub('Пусто', '');
-    else setHub(slot.label || 'Без названия', slot.sub || hint);
+    else setHub(slot.label || 'Без названия', slot.sub || '');
+    renderHints(slot);
+  }
+
+  /**
+   * Строка подсказок под колесом: что сейчас сделают отпускание бинда, клики, прокрутка.
+   * Повторяет обработку в main: mousedown (ЛКМ/ПКМ, центр), navigate, stayOpen, toggle.
+   */
+  function hintItems(slot) {
+    const kind = !slot ? 'center' : slot.stop ? 'stop' : slot.back ? 'back' : slot.folder ? 'folder' : slot.empty ? 'empty' : 'sound';
+    const items = [];
+    if (ctx.holding) {
+      const missed = ctx.stayOpen ? 'колесо останется' : 'закрыть';
+      items.push(['Отпусти бинд', { sound: 'сыграть', stop: 'остановить звук' }[kind] || missed]);
+    }
+    const lmb = {
+      center: 'закрыть',
+      empty: 'закрыть',
+      sound: 'сыграть',
+      stop: 'остановить звук',
+      folder: 'открыть категорию',
+      back: 'к категориям',
+    }[kind];
+    items.push(['ЛКМ', lmb]);
+    if (kind === 'sound') items.push(['Держи ПКМ', 'прослушать в наушниках']);
+    if (kind === 'center') {
+      items.push(['ПКМ', ctx.canBack ? 'к категориям' : 'закрыть']);
+      items.push(['Мышь, ← →', 'выбрать']);
+    }
+    if (paged) items.push(['Прокрутка', 'страницы']);
+    if (!ctx.holding) items.push(['Бинд', 'закрыть']);
+    items.push(['Esc', 'закрыть']);
+    return items;
+  }
+
+  function renderHints(slot) {
+    const items = hintItems(slot);
+    const key = JSON.stringify(items);
+    if (key === hintsKey) return; // при движении мыши внутри сектора не перерисовываем
+    hintsKey = key;
+    hintsEl.replaceChildren(
+      ...items.map(([k, text]) => {
+        const item = document.createElement('span');
+        const badge = document.createElement('span');
+        badge.className = 'key';
+        badge.textContent = k;
+        item.append(badge, text);
+        return item;
+      })
+    );
   }
 
   function moveDot(state) {
@@ -193,7 +246,7 @@
     // Режим предпросмотра: overlay.html можно открыть в обычном браузере, повозить мышью и покрутить колесо.
     const preview = {
       sectors: 8,
-      hint: 'Отпусти, чтобы сыграть',
+      ctx: { holding: true, stayOpen: true, canBack: false },
       page: { n: 1, total: 3 },
       slots: [
         { label: 'Bruh', icon: '😐' },
@@ -218,8 +271,9 @@
       flip({ ...preview, selected });
     });
     document.addEventListener('mousemove', (e) => {
-      const x = e.clientX - innerWidth / 2;
-      const y = e.clientY - innerHeight / 2;
+      const r = document.getElementById('wheel').getBoundingClientRect(); // колесо выше центра: под ним подсказки
+      const x = e.clientX - (r.left + r.width / 2);
+      const y = e.clientY - (r.top + r.height / 2);
       if (Math.hypot(x, y) < 40) return applySelected(null);
       let a = Math.atan2(x, -y);
       if (a < 0) a += Math.PI * 2;

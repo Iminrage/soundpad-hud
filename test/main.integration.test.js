@@ -434,6 +434,7 @@ test('главный процесс: от хоткея до команды в So
   assert.equal(inCat.title, 'Мемы & шутки');
   assert.deepEqual(inCat.slots.map((s) => s.label), ['Bruh', 'Vine boom', 'Назад', '']);
   assert.deepEqual([inCat.slots[2].back, inCat.slots[2].stop, inCat.selected], [true, false, null]);
+  assert.deepEqual(inCat.ctx, { holding: true, stayOpen: false, canBack: true }); // для подсказок: ПКМ в центре — назад
 
   // «Назад» по клику возвращает в меню
   right(3); // → сектор 2
@@ -483,7 +484,7 @@ test('главный процесс: от хоткея до команды в So
   const plays1 = playCmds().length;
   open();
   key('keyup', 30);
-  await waitFor(() => lastOf('overlay:page')?.payload.hint === 'Клик — сыграть, Esc — отмена', 'подсказка после отпускания');
+  await waitFor(() => lastOf('overlay:page')?.payload.ctx.holding === false, 'подсказки после отпускания: бинд уже не держат');
   assert.equal(overlay.visible, true);
   right(1); // → сектор 0, «Bruh»
   await waitFor(() => lastOf('overlay:state')?.payload.selected === 0, 'выбор после отпускания');

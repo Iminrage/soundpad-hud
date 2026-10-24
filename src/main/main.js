@@ -198,10 +198,8 @@ function buildView(cfg) {
 const isPlayable = (slot) => !!slot && (slot.stop || (!slot.folder && slot.catId != null && slot.pos != null));
 
 function overlayPayload(cfg) {
-  const menu = view.key === 'menu';
+  // бинд ещё держат (hold и колесо не «залипло» после отпускания мимо звука)
   const holding = cfg.mode === 'hold' && !(machine && machine.stuck);
-  let hint = holding ? 'Отпусти, чтобы сыграть' : 'Клик — сыграть, Esc — отмена';
-  if (menu) hint = 'Клик — открыть категорию';
   return {
     sectors: cfg.sectors,
     slots: view.slots.map((s) => ({
@@ -211,12 +209,17 @@ function overlayPayload(cfg) {
       stop: !!s.stop,
       back: !!s.back,
       folder: !!s.folder,
-      sub: s.folder ? `${s.count} зв. · клик — открыть` : s.back ? 'Клик — к категориям' : '',
+      sub: s.folder ? `${s.count} зв.` : '',
     })),
     selected: sel.selected,
     title: view.title,
     page: view.pages > 1 ? { n: view.page + 1, total: view.pages } : null,
-    hint,
+    // для строки подсказок под колесом: что сделают отпускание бинда, клики и прокрутка
+    ctx: {
+      holding,
+      stayOpen: holding && cfg.stayOpen,
+      canBack: wheelKind === 'cats' && catOpen != null,
+    },
   };
 }
 
