@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+  <title>Soundpad HUD</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <header>
+    <h1>Soundpad <span>HUD</span></h1>
+    <div id="status" class="badge off">Soundpad: нет связи</div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Бинды <button class="ghost reset" data-reset="binds">Сбросить</button></h2>
+      <div class="row">
+        <label>Колесо звуков</label>
+        <div class="ctl">
+          <span id="hotkeyLabel" class="kbd">Ctrl + Space</span>
+          <button id="recordBtn">Изменить</button>
+        </div>
+      </div>
+      <p class="hint">Открывает звуки, настроенные в разделе «Колесо звуков» ниже.</p>
+      <div class="row">
+        <label>Колесо категорий</label>
+        <div class="ctl">
+          <span id="catHotkeyLabel" class="kbd">не задан</span>
+          <button id="catRecordBtn">Изменить</button>
+          <button id="catClearBtn" class="ghost">Убрать</button>
+        </div>
+      </div>
+      <p class="hint">Сначала показывает все категории Soundpad. Клик по категории открывает её звуки, дальше всё как в колесе звуков. Пока ничего не играет, снизу вместо «Стопа» стрелка «Назад» к категориям.</p>
+      <p class="hint" id="hotkeyHint">Бинд можно записать и из одних модификаторов, например Ctrl + Shift: зажми их и отпусти. Бинд не перехватывается и дойдёт до игры и Windows: Ctrl + Space, Ctrl + Shift и Alt + Shift часто переключают раскладку.</p>
+    </section>
+
+    <section class="card">
+      <h2>Управление колесом <button class="ghost reset" data-reset="control">Сбросить</button></h2>
+      <div class="row">
+        <label for="mode">Как открывать</label>
+        <div class="ctl">
+          <select id="mode">
+            <option value="hold">Держать бинд: отпустил — звук играет</option>
+            <option value="toggle">Нажать бинд: выбор кликом, закрыть — нажать ещё раз</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <label></label>
+        <div class="ctl checks">
+          <label class="check"><input type="checkbox" id="stayOpen"> Не закрывать колесо, если бинд отпущен мимо звука</label>
+        </div>
+      </div>
+      <p class="hint">Только для «Держать бинд». Отпустил на звуке — он играет. Отпустил в центре, на пустом секторе, на категории или на «Назад» — колесо остаётся открытым до клика по звуку, повторного нажатия бинда или Esc.</p>
+      <p class="hint">В колесе: мышь или стрелки ← → выбирают сектор, прокрутка листает страницы. ЛКМ на секторе — сыграть (в колесе категорий — открыть категорию или «Назад»), ЛКМ в центре — закрыть. Зажатая ПКМ на звуке — прослушать его только в наушниках; ПКМ в центре — назад к категориям, а если некуда, закрыть. Esc — закрыть без звука.</p>
+      <div class="row">
+        <label>Мышь в игре</label>
+        <div class="ctl checks">
+          <label class="check"><input type="checkbox" id="grabFocus"> Забирать мышь у игры, пока колесо открыто</label>
+        </div>
+      </div>
+      <p class="hint">Включено: колесо становится активным окном, как при Alt + Tab. Игра не получает движения, клики и прокрутку, курсор не уходит из центра, после закрытия игра снова активна. Полноэкранная игра может при этом свернуться. Выключено: игра получает всю мышь — камера крутится, клик стреляет, ПКМ целится.</p>
+    </section>
+
+    <section class="card">
+      <h2>Вид колеса <button class="ghost reset" data-reset="look">Сбросить</button></h2>
+      <div class="row">
+        <label for="sectors">Звуков на колесе</label>
+        <div class="ctl">
+          <!-- value — всего секторов, вместе со «Стопом» -->
+          <select id="sectors">
+            <option value="4">3</option>
+            <option value="6">5</option>
+            <option value="8">7</option>
+            <option value="10">9</option>
+            <option value="12">11</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint">Плюс нижний сектор «Стоп» на каждой странице (в колесе категорий там «Назад», пока ничего не играет). Столько же категорий помещается на страницу меню категорий.</p>
+      <div class="row">
+        <label for="deadzone">Мёртвая зона</label>
+        <div class="ctl"><input id="deadzone" type="range" min="10" max="120" step="1"><output id="deadzoneOut"></output></div>
+      </div>
+      <div class="row">
+        <label for="sensitivity">Чувствительность</label>
+        <div class="ctl"><input id="sensitivity" type="range" min="0.2" max="5" step="0.1"><output id="sensitivityOut"></output></div>
+      </div>
+      <p class="hint">Мёртвая зона — круг в центре, где ничего не выбрано. Чувствительность — насколько быстро мышь двигает выбор.</p>
+    </section>
+
+    <section class="card">
+      <h2>Куда играть звук <button class="ghost reset" data-reset="lines">Сбросить</button></h2>
+      <div class="row">
+        <label>Звук из колеса</label>
+        <div class="ctl checks">
+          <label class="check"><input type="checkbox" id="lineCapture"> В микрофон (слышат другие)</label>
+          <label class="check"><input type="checkbox" id="lineRender"> В наушники (слышишь ты)</label>
+        </div>
+      </div>
+      <p class="hint">Прослушивание по ПКМ всегда играет только в наушники.</p>
+    </section>
+
+    <section class="card">
+      <h2>Колесо звуков <button class="ghost reset" data-reset="wheel">Сбросить</button></h2>
+      <div class="row">
+        <label for="source">Что на колесе</label>
+        <div class="ctl">
+          <select id="source"></select>
+          <button id="refreshBtn">Обновить библиотеку</button>
+        </div>
+      </div>
+      <p class="hint" id="sourceHint"></p>
+      <p class="hint" id="libStatus"></p>
+      <div id="manual">
+        <div class="row">
+          <label for="fillCat">Заполнить из категории</label>
+          <div class="ctl">
+            <select id="fillCat"></select>
+            <button id="fillBtn">Заполнить</button>
+          </div>
+        </div>
+        <div id="slots"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Служебное <button class="ghost reset" data-reset="service">Сбросить</button></h2>
+      <div class="row">
+        <label>Отладка</label>
+        <div class="ctl checks">
+          <label class="check"><input type="checkbox" id="debug"> Писать команды Soundpad в лог</label>
+          <button id="openData">Открыть папку с логом и конфигом</button>
+        </div>
+      </div>
+      <div class="row">
+        <label>Частые звуки</label>
+        <div class="ctl">
+          <span id="statsInfo" class="hint"></span>
+          <button id="statsClear" class="ghost">Очистить</button>
+        </div>
+      </div>
+      <p class="hint">Счёт звуков, сыгранных из колёс (без прослушивания по ПКМ). Самые частые — папка «Частые» в начале колеса категорий. «Сбросить» раздела счёт не трогает.</p>
+    </section>
+  </main>
+
+  <div id="toast"></div>
+  <script src="settings.js"></script>
+</body>
+</html>

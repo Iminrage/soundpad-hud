@@ -1,0 +1,159 @@
+/* Стиль «как в Fortnite»: тёмно-синее полупрозрачное колесо, яркий выбранный сектор,
+   жирный наклонный капс. Шрифт Burbank проприетарный, поэтому берём системные
+   жирные шрифты (см. README, раздел про шрифт). */
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  cursor: none;
+}
+
+#root {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  background: radial-gradient(circle at center, rgba(4, 10, 32, 0.6) 0%, rgba(4, 10, 32, 0.25) 45%, rgba(4, 10, 32, 0) 70%);
+}
+
+#root.open {
+  opacity: 1;
+}
+
+#wheel {
+  width: min(86vh, 86vw);
+  height: min(86vh, 86vw);
+  transform: scale(0.88);
+  transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+
+#root.open #wheel {
+  transform: scale(1);
+}
+
+.seg {
+  transition: transform 0.1s ease-out;
+}
+
+.seg path {
+  fill: rgba(14, 34, 96, 0.78);
+  stroke: rgba(130, 195, 255, 0.5);
+  stroke-width: 2;
+  transition: fill 0.08s;
+}
+
+.seg.sel path {
+  fill: url(#gSel);
+  stroke: #ffffff;
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 14px rgba(80, 175, 255, 0.95));
+}
+
+.seg.stop path {
+  fill: rgba(110, 18, 40, 0.8);
+  stroke: rgba(255, 140, 150, 0.55);
+}
+
+.seg.stop.sel path {
+  fill: url(#gStop);
+  stroke: #ffffff;
+  filter: drop-shadow(0 0 14px rgba(255, 80, 100, 0.95));
+}
+
+.seg.back path {
+  fill: rgba(40, 60, 90, 0.82);
+  stroke: rgba(200, 220, 255, 0.55);
+}
+
+.seg.folder path {
+  fill: rgba(20, 52, 120, 0.82);
+}
+
+.seg.empty {
+  opacity: 0.38;
+}
+
+.seg text {
+  fill: #ffffff;
+  font-family: 'Bahnschrift', 'Arial Narrow', 'Segoe UI', 'Arial', sans-serif;
+  font-weight: 800;
+  font-style: italic;
+  text-anchor: middle;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  paint-order: stroke;
+  stroke: rgba(0, 12, 50, 0.65);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.seg .ico {
+  font-size: 34px;
+  font-style: normal;
+  stroke: none;
+}
+
+.seg .lbl {
+  font-size: 20px;
+}
+
+.hub {
+  fill: url(#gHub);
+  stroke: rgba(130, 195, 255, 0.6);
+  stroke-width: 3;
+}
+
+.hub-title,
+.hub-sub {
+  fill: #ffffff;
+  text-anchor: middle;
+  text-transform: uppercase;
+  font-family: 'Bahnschrift', 'Arial Narrow', 'Segoe UI', 'Arial', sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.hub-title {
+  font-size: 27px;
+}
+
+.hub-sub {
+  font-size: 13px;
+  font-weight: 600;
+  fill: #9ed3ff;
+  letter-spacing: 0.6px;
+}
+
+.hub-page {
+  font-size: 15px;
+  fill: #ffffff;
+  opacity: 0.85;
+}
+
+/* короткий «щелчок» секторов при листании страницы */
+#segments.flip {
+  animation: flip 0.14s ease-out;
+}
+
+@keyframes flip {
+  from {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dot {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 6px rgba(120, 200, 255, 1));
+}

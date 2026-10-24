@@ -1,0 +1,34 @@
+{
+  "name": "soundpad-hud",
+  "version": "0.1.0",
+  "description": "Emote-wheel HUD поверх Soundpad (Steam): Ctrl+Space открывает колесо, выбранный звук играет через Soundpad",
+  "main": "src/main/main.js",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "start:hidden": "electron . --hidden",
+    "test": "node --test",
+    "probe": "node scripts/probe-soundpad.js",
+    "dist": "electron-builder --win portable"
+  },
+  "dependencies": {
+    "uiohook-napi": "1.5.5"
+  },
+  "devDependencies": {
+    "electron": "45.0.0",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "local.soundpad-hud",
+    "productName": "Soundpad HUD",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "src/assets/icon.png"
+    }
+  }
+}

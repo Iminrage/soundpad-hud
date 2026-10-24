@@ -1,0 +1,261 @@
+:root {
+  --bg: #0b1220;
+  --card: #111b30;
+  --line: #22335a;
+  --text: #e8f0ff;
+  --muted: #8da2c8;
+  --accent: #3da2ff;
+  --accent2: #2f6bff;
+  --bad: #ff5d6c;
+  --ok: #3ddc97;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 'Segoe UI', system-ui, sans-serif;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 5;
+}
+
+h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+h1 span {
+  color: var(--accent);
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+}
+
+main {
+  padding: 22px 28px 60px;
+  display: grid;
+  gap: 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.row > label {
+  color: var(--muted);
+}
+
+.ctl {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.checks {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.hint {
+  margin: 4px 0 8px;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.hint.warn {
+  color: #ffc857;
+}
+
+.kbd {
+  display: inline-block;
+  min-width: 130px;
+  text-align: center;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-bottom-width: 3px;
+  border-radius: 8px;
+  background: #0d1730;
+  font-weight: 700;
+}
+
+.kbd.rec {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button,
+select,
+input[type='text'] {
+  font: inherit;
+  color: var(--text);
+  background: #0d1730;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+button {
+  cursor: pointer;
+  background: linear-gradient(180deg, #2b7bff, #1d57d6);
+  border-color: #3b86ff;
+  font-weight: 600;
+}
+
+button:hover {
+  filter: brightness(1.12);
+}
+
+button.ghost {
+  background: #0d1730;
+  border-color: var(--line);
+  font-weight: 500;
+}
+
+select:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+input[type='range'] {
+  width: 260px;
+  accent-color: var(--accent);
+}
+
+output {
+  min-width: 42px;
+  color: var(--muted);
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12.5px;
+  border: 1px solid var(--line);
+}
+
+.badge.on {
+  color: var(--ok);
+  border-color: var(--ok);
+}
+
+.badge.off {
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+.slot {
+  display: grid;
+  grid-template-columns: 26px 54px 1.1fr 1.3fr 1.8fr 36px 36px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+  border-top: 1px solid #1a2a4d;
+}
+
+.slot .num {
+  color: var(--muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+.slot input,
+.slot select {
+  width: 100%;
+  min-width: 0;
+}
+
+.slot .icon {
+  text-align: center;
+}
+
+.slot button {
+  padding: 6px 0;
+}
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%) translateY(20px);
+  background: #16264a;
+  border: 1px solid var(--accent);
+  padding: 10px 16px;
+  border-radius: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+#toast.bad {
+  border-color: var(--bad);
+}
+
+/* заголовок раздела с кнопкой «Сбросить» справа */
+h2:has(.reset) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h2 .reset {
+  padding: 3px 10px;
+  font-size: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--muted);
+}
