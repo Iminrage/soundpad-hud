@@ -434,7 +434,8 @@ test('главный процесс: от хоткея до команды в So
   assert.equal(inCat.title, 'Мемы & шутки');
   assert.deepEqual(inCat.slots.map((s) => s.label), ['Bruh', 'Vine boom', 'Назад', '']);
   assert.deepEqual([inCat.slots[2].back, inCat.slots[2].stop, inCat.selected], [true, false, null]);
-  assert.deepEqual(inCat.ctx, { holding: true, stayOpen: false, canBack: true }); // для подсказок: ПКМ в центре — назад
+  // для совета и подсказок: держат бинд, галочка stayOpen выключена, ПКМ в центре — назад
+  assert.deepEqual(inCat.ctx, { holding: true, stayOpen: false, toggle: false, canBack: true, showTips: true, showHints: true });
 
   // «Назад» по клику возвращает в меню
   right(3); // → сектор 2

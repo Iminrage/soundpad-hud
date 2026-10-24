@@ -16,11 +16,8 @@ body {
 #root {
   position: fixed;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+  display: grid;
+  place-items: center;
   opacity: 0;
   transition: opacity 0.12s ease;
   background: radial-gradient(circle at center, rgba(4, 10, 32, 0.6) 0%, rgba(4, 10, 32, 0.25) 45%, rgba(4, 10, 32, 0) 70%);
@@ -30,10 +27,16 @@ body {
   opacity: 1;
 }
 
+/* колесо всегда в центре экрана; подсказки висят под ним и не сдвигают его */
+#stage {
+  position: relative;
+}
+
 #wheel {
-  /* под колесом строка подсказок, поэтому по высоте чуть меньше */
-  width: min(78vh, 86vw);
-  height: min(78vh, 86vw);
+  /* ниже колеса нужно место для совета и подсказок, поэтому по высоте чуть меньше */
+  display: block;
+  width: min(74vh, 86vw);
+  height: min(74vh, 86vw);
   transform: scale(0.88);
   transition: transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.15);
 }
@@ -158,39 +161,73 @@ body {
 }
 
 #hints {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px 14px;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
   max-width: 92vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   padding: 8px 16px;
   border-radius: 12px;
   background: rgba(6, 16, 46, 0.72);
   border: 1px solid rgba(130, 195, 255, 0.3);
   font-family: 'Bahnschrift', 'Segoe UI', 'Arial', sans-serif;
   font-size: 15px;
+  line-height: 22px;
   color: #d9ecff;
+}
+
+#hints[hidden],
+#tip[hidden],
+#actions[hidden] {
+  display: none;
+}
+
+/* совет: обычный текст, тише действий */
+#tip {
+  text-align: center;
+  font-size: 14px;
+  color: #a9c8ec;
+}
+
+#actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px 16px;
   white-space: nowrap;
 }
 
-#hints:empty {
-  visibility: hidden;
+/* действие и его клавиши на одной линии: у всех элементов одна высота */
+#actions .hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
 }
 
-#hints .act {
-  margin-right: 6px;
+#actions .act {
+  margin-right: 2px;
 }
 
-#hints .key {
-  display: inline-block;
-  margin-left: 4px;
-  padding: 1px 7px;
+#actions .key {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  box-sizing: border-box;
+  padding: 0 7px;
   border-radius: 5px;
   background: rgba(143, 220, 255, 0.16);
   border: 1px solid rgba(143, 220, 255, 0.55);
   color: #ffffff;
   font-weight: 700;
   font-size: 13px;
+  line-height: 1;
 }
 
 .dot {

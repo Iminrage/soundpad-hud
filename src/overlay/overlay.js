@@ -16,13 +16,16 @@
   const hubPage = document.getElementById('hubPage');
   const dot = document.getElementById('dot');
   const hintsEl = document.getElementById('hints');
+  const tipEl = document.getElementById('tip');
+  const actionsEl = document.getElementById('actions');
 
   let count = 8;
   let slots = [];
   let segs = [];
   let selected = null;
   let paged = false;
-  let ctx = { holding: true, stayOpen: false, canBack: false }; // от main, см. overlayPayload
+  // от main, см. overlayPayload
+  let ctx = { holding: true, stayOpen: false, toggle: false, canBack: false, showTips: true, showHints: true };
   let prompt = 'Выбери звук'; // в центре, когда ничего не выбрано
   let hintsKey = '';
 
@@ -148,9 +151,20 @@
     'Прослушать в наушниках',
     'Выбрать сектор',
     'Листать страницы',
-    'Колесо останется',
     'Закрыть',
   ];
+
+  /** Совет обычным текстом, первой строкой: что бинд можно отпустить и почему. */
+  function tipText() {
+    // одной строкой: иначе на экранах пониже панель уходит за край
+    if (ctx.holding && ctx.stayOpen) {
+      return 'Совет: бинд можно отпустить — колесо не закроется, пока не выберешь звук (включено «Не закрывать колесо»).';
+    }
+    if (ctx.toggle) {
+      return 'Совет: клавиши можно отпустить — в режиме «Нажать бинд» колесо закроется кликом, биндом или Esc.';
+    }
+    return '';
+  }
 
   /**
    * Что сейчас сделают отпускание бинда, клики, прокрутка: пары [клавиша, действие].
@@ -160,8 +174,9 @@
     const kind = !slot ? 'center' : slot.stop ? 'stop' : slot.back ? 'back' : slot.folder ? 'folder' : slot.empty ? 'empty' : 'sound';
     const items = [];
     if (ctx.holding) {
-      const missed = ctx.stayOpen ? 'Колесо останется' : 'Закрыть';
-      items.push(['Отпусти бинд', { sound: 'Сыграть', stop: 'Остановить звук' }[kind] || missed]);
+      // отпускание мимо звука при stayOpen ничего не делает: об этом говорит совет, а не строка действий
+      const release = { sound: 'Сыграть', stop: 'Остановить звук' }[kind] || (ctx.stayOpen ? null : 'Закрыть');
+      if (release) items.push(['Отпусти бинд', release]);
     }
     const lmb = {
       center: 'Закрыть',
@@ -194,13 +209,19 @@
   }
 
   function renderHints(slot) {
-    const groups = hintGroups(slot);
-    const key = JSON.stringify(groups);
+    const tip = ctx.showTips ? tipText() : '';
+    const groups = ctx.showHints ? hintGroups(slot) : [];
+    const key = JSON.stringify([tip, groups]);
     if (key === hintsKey) return; // при движении мыши внутри сектора не перерисовываем
     hintsKey = key;
-    hintsEl.replaceChildren(
+    tipEl.textContent = tip;
+    tipEl.hidden = !tip;
+    actionsEl.hidden = !groups.length;
+    hintsEl.hidden = !tip && !groups.length;
+    actionsEl.replaceChildren(
       ...groups.map(([action, keys]) => {
         const item = document.createElement('span');
+        item.className = 'hint';
         const label = document.createElement('span');
         label.className = 'act';
         label.textContent = action;
@@ -275,7 +296,7 @@
     // Режим предпросмотра: overlay.html можно открыть в обычном браузере, повозить мышью и покрутить колесо.
     const preview = {
       sectors: 8,
-      ctx: { holding: true, stayOpen: true, canBack: false },
+      ctx: { holding: true, stayOpen: true, toggle: false, canBack: false, showTips: true, showHints: true },
       page: { n: 1, total: 3 },
       slots: [
         { label: 'Bruh', icon: '😐' },

@@ -8,30 +8,36 @@
 </head>
 <body>
   <div id="root">
-    <svg id="wheel" viewBox="-300 -300 600 600" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="gSel" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#8fdcff"/>
-          <stop offset="1" stop-color="#2f80ff"/>
-        </linearGradient>
-        <linearGradient id="gStop" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#ff9a8f"/>
-          <stop offset="1" stop-color="#e0263a"/>
-        </linearGradient>
-        <radialGradient id="gHub" cx="50%" cy="40%" r="70%">
-          <stop offset="0" stop-color="#1c3a8a" stop-opacity="0.95"/>
-          <stop offset="1" stop-color="#0a1840" stop-opacity="0.95"/>
-        </radialGradient>
-      </defs>
-      <g id="segments"></g>
-      <circle class="hub" r="104"/>
-      <text id="hubPage" class="hub-sub hub-page" x="0" y="-58"></text>
-      <text id="hubTitle" class="hub-title" x="0" y="0"></text>
-      <text id="hubSub" class="hub-sub" x="0" y="62"></text>
-      <circle id="dot" class="dot" r="6" cx="0" cy="0"/>
-    </svg>
-    <!-- подсказки: что сейчас сделают отпускание бинда, клики, прокрутка (собирает overlay.js) -->
-    <div id="hints"></div>
+    <div id="stage">
+      <svg id="wheel" viewBox="-300 -300 600 600" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gSel" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#8fdcff"/>
+            <stop offset="1" stop-color="#2f80ff"/>
+          </linearGradient>
+          <linearGradient id="gStop" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ff9a8f"/>
+            <stop offset="1" stop-color="#e0263a"/>
+          </linearGradient>
+          <radialGradient id="gHub" cx="50%" cy="40%" r="70%">
+            <stop offset="0" stop-color="#1c3a8a" stop-opacity="0.95"/>
+            <stop offset="1" stop-color="#0a1840" stop-opacity="0.95"/>
+          </radialGradient>
+        </defs>
+        <g id="segments"></g>
+        <circle class="hub" r="104"/>
+        <text id="hubPage" class="hub-sub hub-page" x="0" y="-58"></text>
+        <text id="hubTitle" class="hub-title" x="0" y="0"></text>
+        <text id="hubSub" class="hub-sub" x="0" y="62"></text>
+        <circle id="dot" class="dot" r="6" cx="0" cy="0"/>
+      </svg>
+      <!-- под колесом (собирает overlay.js): совет обычным текстом и действия с клавишами;
+           висит поверх, чтобы его размер не сдвигал колесо -->
+      <div id="hints">
+        <div id="tip"></div>
+        <div id="actions"></div>
+      </div>
+    </div>
   </div>
   <script src="overlay.js"></script>
 </body>

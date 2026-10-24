@@ -24,6 +24,8 @@ function defaults() {
     sectors: 8,
     deadzone: 45, // радиус «мёртвой зоны» в центре, где ничего не выбрано
     sensitivity: 1, // множитель движения мыши для выбора сектора
+    showTips: true, // под колесом: совет (например, что бинд можно отпустить)
+    showHints: true, // под колесом: действия и клавиши для них
     lines: { render: true, capture: true }, // render — слышишь ты, capture — слышат в микрофоне
     // пока колесо открыто, оверлей забирает фокус: игра не получает мышь, клики и прокрутку
     grabFocus: true,
@@ -112,6 +114,8 @@ function sanitize(raw) {
     sectors: SECTOR_CHOICES.includes(r.sectors) ? r.sectors : d.sectors,
     deadzone: clamp(r.deadzone, 10, 120, d.deadzone),
     sensitivity: clamp(r.sensitivity, 0.2, 5, d.sensitivity),
+    showTips: flag(r.showTips, d.showTips),
+    showHints: flag(r.showHints, d.showHints),
     lines: { render, capture },
     grabFocus: flag(r.grabFocus, d.grabFocus),
     slots: Array.from({ length: MAX_SLOTS }, (_, i) => sanitizeSlot(slotsIn[i])),
@@ -125,7 +129,7 @@ function sanitize(raw) {
 const SECTIONS = {
   binds: ['hotkey', 'catHotkey'],
   control: ['mode', 'stayOpen', 'grabFocus'],
-  look: ['sectors', 'deadzone', 'sensitivity'],
+  look: ['sectors', 'deadzone', 'sensitivity', 'showTips', 'showHints'],
   lines: ['lines'],
   wheel: ['source', 'slots'],
   service: ['debug'],

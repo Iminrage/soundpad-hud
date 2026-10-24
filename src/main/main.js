@@ -214,11 +214,14 @@ function overlayPayload(cfg) {
     selected: sel.selected,
     title: view.title,
     page: view.pages > 1 ? { n: view.page + 1, total: view.pages } : null,
-    // для строки подсказок под колесом: что сделают отпускание бинда, клики и прокрутка
+    // для совета и подсказок под колесом: что сделают отпускание бинда, клики и прокрутка
     ctx: {
       holding,
       stayOpen: holding && cfg.stayOpen,
+      toggle: cfg.mode === 'toggle',
       canBack: wheelKind === 'cats' && catOpen != null,
+      showTips: cfg.showTips,
+      showHints: cfg.showHints,
     },
   };
 }

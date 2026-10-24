@@ -288,6 +288,8 @@
     $('lineCapture').checked = cfg.lines.capture;
     $('debug').checked = cfg.debug;
     $('grabFocus').checked = cfg.grabFocus;
+    $('showTips').checked = cfg.showTips;
+    $('showHints').checked = cfg.showHints;
     $('deadzoneOut').textContent = cfg.deadzone;
     $('sensitivityOut').textContent = Number(cfg.sensitivity).toFixed(1);
     $('stayOpen').checked = cfg.stayOpen;
@@ -347,6 +349,8 @@
     $('lineCapture').addEventListener('change', saveLines);
     $('debug').addEventListener('change', () => patch({ debug: $('debug').checked }));
     $('grabFocus').addEventListener('change', () => patch({ grabFocus: $('grabFocus').checked }));
+    $('showTips').addEventListener('change', () => patch({ showTips: $('showTips').checked }));
+    $('showHints').addEventListener('change', () => patch({ showHints: $('showHints').checked }));
     $('openData').addEventListener('click', () => api.openDataFolder());
     $('statsClear').addEventListener('click', async () => {
       if (!confirm('Очистить счёт частых звуков? Папка «Частые» опустеет.')) return;

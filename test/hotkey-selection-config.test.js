@@ -250,7 +250,7 @@ test('config: хоткей колеса категорий', () => {
 });
 
 test('config: сброс раздела к значениям по умолчанию', () => {
-  assert.deepEqual(resetPatch('look'), { sectors: 8, deadzone: 45, sensitivity: 1 });
+  assert.deepEqual(resetPatch('look'), { sectors: 8, deadzone: 45, sensitivity: 1, showTips: true, showHints: true });
   assert.equal(comboLabel(resetPatch('binds').catHotkey), 'Ctrl + Shift');
   assert.equal(resetPatch('нет такого'), null);
   // каждое поле настроек, кроме служебных, принадлежит какому-то разделу
