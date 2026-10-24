@@ -1,9 +1,10 @@
 {
   "name": "soundpad-hud",
   "version": "0.1.0",
-  "description": "Emote-wheel HUD поверх Soundpad (Steam): Ctrl+Space открывает колесо, выбранный звук играет через Soundpad",
+  "description": "Emote-wheel HUD поверх Soundpad (Steam): по бинду открывается колесо, выбранный звук играет через Soundpad",
   "main": "src/main/main.js",
   "private": true,
+  "author": "Soundpad HUD",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
@@ -22,9 +23,12 @@
   "build": {
     "appId": "local.soundpad-hud",
     "productName": "Soundpad HUD",
+    "npmRebuild": false,
     "files": [
       "src/**/*",
-      "package.json"
+      "package.json",
+      "!node_modules/uiohook-napi/{libuiohook,src,binding.gyp}",
+      "!node_modules/uiohook-napi/prebuilds/{darwin,linux}-*"
     ],
     "win": {
       "target": "portable",
