@@ -412,6 +412,8 @@ test('главный процесс: от хоткея до команды в So
   assert.equal(menu.title, 'Выбери категорию');
   assert.deepEqual(menu.slots.map((s) => s.label), ['Частые', 'Все звуки', 'Стоп', 'Мемы & шутки']);
   assert.deepEqual(menu.slots.map((s) => s.folder), [true, true, false, true]);
+  // полное название для панели над колесом: у папки путь категории, у «Стопа» пусто
+  assert.deepEqual(menu.slots.map((s) => s.full), ['Частые', 'Все звуки', '', 'Мемы & шутки']);
   assert.deepEqual(menu.page, { n: 1, total: 2 });
 
   // «Частые»: по убыванию счёта, при равенстве недавний выше; играются через «Все звуки»

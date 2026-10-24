@@ -160,6 +160,35 @@ body {
   }
 }
 
+/* полное название выбранного сектора: над колесом, как подсказки под ним */
+#fullname {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(92vw, 900px);
+  padding: 6px 18px;
+  border-radius: 12px;
+  background: rgba(6, 16, 46, 0.72);
+  border: 1px solid rgba(130, 195, 255, 0.3);
+  font-family: 'Bahnschrift', 'Arial Narrow', 'Segoe UI', 'Arial', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 26px;
+  color: #ffffff;
+  text-align: center;
+  /* не больше двух строк, чтобы не упереться в верх экрана */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+#fullname[hidden] {
+  display: none;
+}
+
 #hints {
   position: absolute;
   top: calc(100% + 8px);

@@ -210,6 +210,8 @@ function overlayPayload(cfg) {
       back: !!s.back,
       folder: !!s.folder,
       sub: s.folder ? `${s.count} зв.` : '',
+      // полное название для панели над колесом: у звука — название из Soundpad, у папки — путь категории
+      full: s.stop || s.back ? '' : s.title || s.label || '',
     })),
     selected: sel.selected,
     title: view.title,

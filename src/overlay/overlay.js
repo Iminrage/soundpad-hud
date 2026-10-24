@@ -18,6 +18,7 @@
   const hintsEl = document.getElementById('hints');
   const tipEl = document.getElementById('tip');
   const actionsEl = document.getElementById('actions');
+  const fullnameEl = document.getElementById('fullname');
 
   let count = 8;
   let slots = [];
@@ -115,9 +116,25 @@
     }
   }
 
+  const HUB_CHARS = 13; // строка заголовка в центре колеса
+  const HUB_LINES = 2;
+  const squash = (s) => String(s).trim().replace(/\s+/g, ' ');
+
+  /**
+   * Панель над колесом: полное название, когда в центре видно не оно целиком
+   * (обрезано или в секторе своя подпись вместо названия звука).
+   */
+  function setFullName(slot) {
+    const full = slot && !slot.empty ? squash(slot.full || '') : '';
+    const shown = slot ? wrapLabel(slot.label || '', HUB_CHARS, HUB_LINES).join(' ') : '';
+    const need = !!full && full !== squash(shown);
+    fullnameEl.textContent = need ? full : '';
+    fullnameEl.hidden = !need;
+  }
+
   function setHub(title, sub) {
     hubTitle.replaceChildren();
-    const lines = wrapLabel(title, 13, 2);
+    const lines = wrapLabel(title, HUB_CHARS, HUB_LINES);
     const startY = lines.length > 1 ? -12 : 4;
     lines.forEach((line, k) => {
       const ts = svgEl('tspan', { x: '0', y: String(startY + k * 28) });
@@ -139,6 +156,7 @@
     else if (slot.stop) setHub('Стоп', 'Остановить звук');
     else if (slot.empty) setHub('Пусто', '');
     else setHub(slot.label || 'Без названия', slot.sub || '');
+    setFullName(slot);
     renderHints(slot);
   }
 
@@ -302,7 +320,7 @@
         { label: 'Bruh', icon: '😐' },
         { label: 'Vine boom', icon: '💥' },
         { label: 'Airhorn', icon: '📢' },
-        { label: 'Это очень длинное название', icon: '🎺' },
+        { label: 'Это очень длинное название', full: 'Это очень длинное название звука, которое не помещается в центре колеса', icon: '🎺' },
         { label: 'Стоп', icon: '⏹', stop: true },
         { label: '', icon: '', empty: true },
         { label: 'Oof', icon: '😵' },
