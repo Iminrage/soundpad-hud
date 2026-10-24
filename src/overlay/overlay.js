@@ -116,28 +116,81 @@
     }
   }
 
-  const HUB_CHARS = 13; // строка заголовка в центре колеса
-  const HUB_LINES = 2;
   const squash = (s) => String(s).trim().replace(/\s+/g, ' ');
 
-  /**
-   * Панель над колесом: полное название, когда в центре видно не оно целиком
-   * (обрезано или в секторе своя подпись вместо названия звука).
-   */
+  /** Панель над колесом: полное название выбранного звука или путь категории. */
   function setFullName(slot) {
-    const full = slot && !slot.empty ? squash(slot.full || '') : '';
-    const shown = slot ? wrapLabel(slot.label || '', HUB_CHARS, HUB_LINES).join(' ') : '';
-    const need = !!full && full !== squash(shown);
-    fullnameEl.textContent = need ? full : '';
-    fullnameEl.hidden = !need;
+    const full = slot && !slot.empty && !slot.stop && !slot.back ? squash(slot.full || slot.label || '') : '';
+    fullnameEl.textContent = full;
+    fullnameEl.hidden = !full;
+  }
+
+  // Название в центре колеса: сначала уменьшаем шрифт, потом «начало / …конец»
+  const HUB_SIZES = [27, 24, 21, 18]; // px; меньше 18 уже плохо читается поверх игры
+  const HUB_MAX_W = 176; // ширина строки внутри круга (r = 104) в единицах viewBox
+  const HUB_LINES = 2;
+  // невидимый текст с тем же классом: меряем ширину с учётом шрифта и заглавных букв
+  const measureEl = svgEl('text', { class: 'hub-title', x: '0', y: '-9999', visibility: 'hidden' });
+  document.getElementById('wheel').appendChild(measureEl);
+
+  function textWidth(text, size) {
+    measureEl.style.fontSize = `${size}px`;
+    measureEl.textContent = text;
+    return measureEl.getComputedTextLength();
+  }
+
+  /** Перенос по словам в maxLines строк шириной HUB_MAX_W; null — не влезает. */
+  function wrapToWidth(text, size) {
+    const lines = [];
+    for (const word of squash(text).split(' ')) {
+      if (textWidth(word, size) > HUB_MAX_W) return null;
+      const last = lines[lines.length - 1];
+      if (last !== undefined && textWidth(`${last} ${word}`, size) <= HUB_MAX_W) lines[lines.length - 1] = `${last} ${word}`;
+      else lines.push(word);
+      if (lines.length > HUB_LINES) return null;
+    }
+    return lines;
+  }
+
+  /** Самая длинная часть text (с начала или с конца), которая влезает в строку вместе с extra. */
+  function fitPart(text, size, fromEnd, extra = '') {
+    let n = text.length;
+    const part = (k) => (fromEnd ? text.slice(text.length - k) : text.slice(0, k));
+    while (n > 0 && textWidth(fromEnd ? extra + part(n).trimStart() : part(n).trimEnd() + extra, size) > HUB_MAX_W) n--;
+    // режем по границе слова, если строка от этого укоротится не больше чем вдвое:
+    // «Это очень», а не «Это очень длинно»
+    const cutInWord = n < text.length && (fromEnd ? text[text.length - n - 1] !== ' ' : text[n] !== ' ');
+    if (cutInWord) {
+      const p = part(n);
+      const space = fromEnd ? p.indexOf(' ') : p.lastIndexOf(' ');
+      const kept = fromEnd ? p.length - space - 1 : space;
+      if (space >= 0 && kept >= p.length / 2) n = kept;
+    }
+    return fromEnd ? part(n).trimStart() : part(n).trimEnd();
+  }
+
+  /** Строки и размер шрифта для названия в центре. */
+  function fitHub(title) {
+    const text = squash(title);
+    for (const size of HUB_SIZES) {
+      const lines = wrapToWidth(text, size);
+      if (lines) return { size, lines };
+    }
+    // даже самым мелким шрифтом не влезает: первая строка — начало, вторая — «…» и конец
+    const size = HUB_SIZES[HUB_SIZES.length - 1];
+    const head = fitPart(text, size, false);
+    const tail = fitPart(text.slice(head.length), size, true, '…');
+    return { size, lines: [head, `…${tail}`] };
   }
 
   function setHub(title, sub) {
+    const { size, lines } = fitHub(title);
+    const lineH = Math.round(size * 1.05);
+    const startY = -((lines.length - 1) * lineH) / 2 + size * 0.35 - 4; // блок строк по центру круга
+    hubTitle.style.fontSize = `${size}px`;
     hubTitle.replaceChildren();
-    const lines = wrapLabel(title, HUB_CHARS, HUB_LINES);
-    const startY = lines.length > 1 ? -12 : 4;
     lines.forEach((line, k) => {
-      const ts = svgEl('tspan', { x: '0', y: String(startY + k * 28) });
+      const ts = svgEl('tspan', { x: '0', y: (startY + k * lineH).toFixed(1) });
       ts.textContent = line;
       hubTitle.appendChild(ts);
     });
@@ -319,8 +372,8 @@
       slots: [
         { label: 'Bruh', icon: '😐' },
         { label: 'Vine boom', icon: '💥' },
-        { label: 'Airhorn', icon: '📢' },
-        { label: 'Это очень длинное название', full: 'Это очень длинное название звука, которое не помещается в центре колеса', icon: '🎺' },
+        { label: 'Oxxxymiron - Где нас нет', icon: '📢' },
+        { label: 'Это очень длинное название звука, которое не помещается в центре колеса', icon: '🎺' },
         { label: 'Стоп', icon: '⏹', stop: true },
         { label: '', icon: '', empty: true },
         { label: 'Oof', icon: '😵' },
